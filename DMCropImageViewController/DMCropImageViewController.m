@@ -1,30 +1,47 @@
-//
-//  DMCropImageViewController.m
-//  CropImageDemo
-//
-//  Created by Dream on 16/3/8.
-//  Copyright © 2016年 Dream. All rights reserved.
-//
+/**
+ The MIT License (MIT)
+ 
+ Copyright (c) 2016 Jun
+ 
+ Permission is hereby granted, free of charge, to any person obtaining a copy
+ of this software and associated documentation files (the "Software"), to deal
+ in the Software without restriction, including without limitation the rights
+ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ copies of the Software, and to permit persons to whom the Software is
+ furnished to do so, subject to the following conditions:
+ 
+ The above copyright notice and this permission notice shall be included in all
+ copies or substantial portions of the Software.
+ 
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ SOFTWARE.
+ */
 
 #import "DMCropImageViewController.h"
 #import "DMCropImageCoverView.h"
 
 @interface DMCropImageViewController () <UIScrollViewDelegate>
 
-@property (nonatomic, strong) UIScrollView *m_scrollView;
-@property (nonatomic, strong) UIView *m_imageBGView;
-@property (nonatomic, strong) UIImageView *m_imageView;
+@property (nullable, nonatomic, strong) UIScrollView *m_scrollView;
+@property (nullable, nonatomic, strong) UIImageView *m_imageView;
 
-@property (nonatomic, strong) DMCropImageCoverView *m_coverView;
-@property (nonatomic, assign) CGFloat m_paddingTop;
+@property (nullable, nonatomic, strong) DMCropImageCoverView *m_coverView;
 
 @end
 
 @implementation DMCropImageViewController
 
-+ (instancetype)cropImageViewController
++ (instancetype)cropImageViewControllerWithCropRect:(CGRect)cropRect;
 {
-    return [[self alloc] init];
+    DMCropImageViewController *vc = [[self alloc] init];
+    vc.m_cropRect = cropRect;
+    
+    return vc;
 }
 
 - (void)viewDidLoad
@@ -56,8 +73,8 @@
     [self.navigationController setNavigationBarHidden:NO animated:NO];
 }
 
-- (UIButton *)createButtonWithTitle:(NSString *)title
-                         withAction:(SEL)action;
+- (nonnull UIButton *)createButtonWithTitle:(nonnull NSString *)title
+                                 withAction:(SEL)action;
 {
     UIButton *btn = [UIButton buttonWithType:UIButtonTypeCustom];
     [btn setTitle:title forState:UIControlStateNormal];
@@ -99,7 +116,7 @@
     btnConfirm.frame = (CGRect){btnConfirmX, btnConfirmY, btnW, btnH};
 }
 
-- (void)btnCancelClick:(UIButton *)btn
+- (void)btnCancelClick:(nonnull UIButton *)btn
 {
     if ([self.delegate respondsToSelector:@selector(cropImageViewControllerDidClickCancel:)])
     {
@@ -107,7 +124,7 @@
     }
 }
 
-- (UIImage *)screenShot
+- (nonnull UIImage *)screenShot
 {
     CGRect rect = self.view.frame;
     
@@ -144,37 +161,95 @@
     }
 }
 
+- (void)viewWillLayoutSubviews
+{
+    [super viewWillLayoutSubviews];
+    
+    [self scrollViewAdjustFrame];
+    [self coverViewAdjustFrame];
+}
+
+- (void)setM_cropRect:(CGRect)m_cropRect
+{
+    _m_cropRect = m_cropRect;
+    
+    [self setupImage];
+}
+
+- (void)scrollViewAdjustFrame
+{
+    self.m_scrollView.frame = self.m_cropRect;
+    [self imageViewAdjustFrame];
+}
+
 - (void)createScrollView
 {
     if (nil == _m_scrollView)
     {
-        CGRect frame = [UIScreen mainScreen].bounds;
-        UIScrollView *scrollView = [[UIScrollView alloc] initWithFrame:frame];
+        UIScrollView *scrollView = [[UIScrollView alloc] init];
         [self.view addSubview:scrollView];
+        _m_scrollView = scrollView;
         
         scrollView.delegate = self;
-        scrollView.maximumZoomScale = 1;//2.5;
+        scrollView.maximumZoomScale = 2.5;
         scrollView.minimumZoomScale = 1;
         scrollView.showsHorizontalScrollIndicator = NO;
         scrollView.showsVerticalScrollIndicator = NO;
+        scrollView.bounces = YES;
+        scrollView.alwaysBounceHorizontal = YES;
+        scrollView.alwaysBounceVertical = YES;
+        scrollView.scrollsToTop = NO;
+        scrollView.decelerationRate = UIScrollViewDecelerationRateFast;
+        scrollView.clipsToBounds = NO;
         
-        _m_scrollView = scrollView;
+        [self createCoverView];
         
         [self createImageView];
-        
-        DMCropImageCoverView *view = [[DMCropImageCoverView alloc] initWithFrame:frame];
-        [self.view addSubview:view];
-        view.userInteractionEnabled = NO;
-        view.backgroundColor = [UIColor clearColor];
-        CGFloat clipX = 0;
-        CGFloat clipW = [self screenWidth] - clipX * 2;
-        CGFloat clipH = floor(clipW * 9 / 16);
-        CGFloat clipY = floor(([self screenHeight] - clipH) / 2);
-        view.m_clipRect = (CGRect){clipX, clipY, clipW, clipH};
-        self.m_coverView = view;
     }
 }
 
+- (void)coverViewAdjustFrame
+{
+    self.m_coverView.frame = [UIScreen mainScreen].bounds;
+}
+
+- (void)createCoverView
+{
+    DMCropImageCoverView *view = [[DMCropImageCoverView alloc] init];
+    [self.view addSubview:view];
+    self.m_coverView = view;
+    view.m_recieverView = self.m_scrollView;
+    
+    view.backgroundColor = [UIColor clearColor];
+    view.m_clipRect = self.m_cropRect;
+}
+
+- (void)imageViewAdjustFrame
+{
+    CGRect frameToCenter = self.m_imageView.frame;
+    
+    // center horizontally
+    if (CGRectGetWidth(frameToCenter) < CGRectGetWidth(self.m_scrollView.bounds))
+    {
+        frameToCenter.origin.x = (CGRectGetWidth(self.m_scrollView.bounds) - CGRectGetWidth(frameToCenter)) * 0.5f;
+    }
+    else
+    {
+        frameToCenter.origin.x = 0;
+    }
+    
+    // center vertically
+    if (CGRectGetHeight(frameToCenter) < CGRectGetHeight(self.m_scrollView.bounds))
+    {
+        frameToCenter.origin.y = (CGRectGetHeight(self.m_scrollView.bounds) - CGRectGetHeight(frameToCenter)) * 0.5f;
+    }
+    else
+    {
+        frameToCenter.origin.y = 0;
+    }
+    
+    self.m_imageView.frame = frameToCenter;
+}
 
 - (void)createImageView
 {
@@ -183,7 +258,7 @@
         CGRect bgFrame = self.m_scrollView.bounds;
         UIView *imageBGView = [[UIView alloc] initWithFrame:bgFrame];
         [self.m_scrollView addSubview:imageBGView];
-        self.m_imageBGView = imageBGView;
+
         imageBGView.backgroundColor = [UIColor blackColor];
         
         UIImageView *imageView = [[UIImageView alloc] init];
@@ -195,87 +270,65 @@
     }
 }
 
-
+- (void)setM_image:(UIImage *)m_image
+{
+    _m_image = m_image;
+    
+    [self setupImage];
+}
 
 - (void)setupImage
 {
-    if (nil != self.image)
+    if (nil != self.m_image)
     {
-        CGFloat scrollWidth = [self screenWidth];
-        CGFloat scrollHeight = [self screenHeight];
+        CGFloat screenWidth = [self screenWidth];
+        CGFloat screenHeight = [self screenHeight];
         
-        CGFloat imageSrcWidth = self.image.size.width;
-        CGFloat imageSrcHeight = self.image.size.height;
+        CGFloat imageSrcWidth = self.m_image.size.width;
+        CGFloat imageSrcHeight = self.m_image.size.height;
         
-        CGFloat imageShowWidth = scrollWidth;
+        CGFloat imageShowWidth = screenWidth;
         CGFloat imageShowHeight = floorf(imageShowWidth / imageSrcWidth * imageSrcHeight);
-
-        CGRect clipRect = self.m_coverView.m_clipRect;
         
-        self.m_imageView.image = self.image;
+        self.m_imageView.image = self.m_image;
+        self.m_imageView.frame = (CGRect){0, 0, imageShowWidth, imageShowHeight};
+        self.m_scrollView.contentSize = CGSizeMake(imageShowWidth, imageShowHeight);
         
-        if (imageShowHeight >= scrollHeight)
+        CGFloat cropHeight = self.m_cropRect.size.height;
+        
+        CGFloat offsetX = 0;
+        
+        CGFloat offsetY = 0;
+        if (imageShowHeight >= screenHeight)
         {
-            CGFloat scrollPadding = floor((scrollHeight - clipRect.size.height) / 2);
-            
-            CGFloat scrollPaddingW = scrollWidth - clipRect.size.width;
-            CGRect imageFrame = (CGRect){0, 0, imageShowWidth, imageShowHeight};
-            self.m_imageView.frame = imageFrame;
-            imageFrame.origin.x = clipRect.origin.x;
-            imageFrame.origin.y = scrollPadding;
-            self.m_imageBGView.frame = imageFrame;
-            
-            self.m_scrollView.contentOffset = (CGPoint){clipRect.origin.x, scrollPadding};
-            self.m_scrollView.contentSize = (CGSize){scrollWidth + scrollPaddingW, floor(imageShowHeight + scrollPadding * 2)};
+            offsetY = self.m_cropRect.origin.y;
         }
         else
         {
-            CGFloat imagePadding = floor((scrollHeight - imageShowHeight) / 2);
-
-            self.m_imageView.frame = (CGRect){0, imagePadding, imageShowWidth, imageShowHeight};
-            
-            CGFloat scrollPaddingW = scrollWidth - clipRect.size.width;
-            CGFloat scrollPaddingH = floor((imageShowHeight - clipRect.size.height) / 2);
-            CGRect imageBGFrame = self.m_imageBGView.frame;
-            imageBGFrame.origin.y = scrollPaddingH;
-            imageBGFrame.origin.x = clipRect.origin.x;
-            self.m_imageBGView.frame = imageBGFrame;
-            
-            self.m_scrollView.contentOffset = (CGPoint){clipRect.origin.x, scrollPaddingH};
-            self.m_scrollView.contentSize = (CGSize){scrollWidth + scrollPaddingW, floor(scrollHeight + scrollPaddingH * 2)};
+            if (cropHeight > imageShowHeight)
+            {
+                offsetY = (cropHeight - imageShowHeight) / 2;
+            }
+            else
+            {
+                offsetY = (imageShowHeight - cropHeight) / 2;
+            }
         }
+        
+        self.m_scrollView.contentOffset = CGPointMake(offsetX, offsetY);
     }
 }
 
 
 #pragma mark - UIScrollViewDelegate
-- (UIView *)viewForZoomingInScrollView:(UIScrollView *)scrollView
+- (nullable UIView *)viewForZoomingInScrollView:(UIScrollView *)scrollView
 {
-    return self.m_imageBGView;
+    return self.m_imageView;
 }
 
 - (void)scrollViewDidZoom:(UIScrollView *)scrollView
 {
-    NSLog(@"frame = %@, %@", NSStringFromCGRect(self.m_imageBGView.frame), @(scrollView.zoomScale));
-//    CGFloat scrollWidth = [UIScreen mainScreen].bounds.size.width;
-//    CGFloat scrollHeight = [UIScreen mainScreen].bounds.size.height;
-//    
-//    CGFloat bgViewW = self.m_imageBGView.frame.size.width;
-//    CGFloat bgViewH = self.m_imageBGView.frame.size.height;
-//    CGFloat bgViewX = 0;
-//    CGFloat bgViewY = 0;
-//    
-//    if (bgViewW < scrollWidth)
-//    {
-//        bgViewX = floor((scrollWidth - bgViewW) / 2);
-//        bgViewY = floor((scrollHeight - bgViewH) / 2);
-//        
-//        self.m_imageBGView.frame = (CGRect){bgViewX, bgViewY, bgViewW, bgViewH};
-//    }
-//    else
-//    {
-//        self.m_imageBGView.frame = (CGRect){0, self.m_paddingTop, bgViewW, bgViewH};
-//    }
+    [self imageViewAdjustFrame];
 }
 
 @end

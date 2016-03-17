@@ -15,8 +15,8 @@
 		F145AA4A1C8EB9FE0036870F /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F145AA481C8EB9FE0036870F /* LaunchScreen.storyboard */; };
 		F145AA551C8EB9FE0036870F /* CropImageDemoTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F145AA541C8EB9FE0036870F /* CropImageDemoTests.m */; };
 		F145AA601C8EB9FF0036870F /* CropImageDemoUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = F145AA5F1C8EB9FF0036870F /* CropImageDemoUITests.m */; };
-		F145AA781C968AAA0036870F /* DMCropImageCoverView.m in Sources */ = {isa = PBXBuildFile; fileRef = F145AA751C968AAA0036870F /* DMCropImageCoverView.m */; };
-		F145AA791C968AAA0036870F /* DMCropImageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F145AA771C968AAA0036870F /* DMCropImageViewController.m */; };
+		F1F01D591C9AA0AA009C41DF /* DMCropImageCoverView.m in Sources */ = {isa = PBXBuildFile; fileRef = F1F01D561C9AA0AA009C41DF /* DMCropImageCoverView.m */; };
+		F1F01D5A1C9AA0AA009C41DF /* DMCropImageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F1F01D581C9AA0AA009C41DF /* DMCropImageViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -53,10 +53,10 @@
 		F145AA5B1C8EB9FE0036870F /* CropImageDemoUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CropImageDemoUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		F145AA5F1C8EB9FF0036870F /* CropImageDemoUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CropImageDemoUITests.m; sourceTree = "<group>"; };
 		F145AA611C8EB9FF0036870F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		F145AA741C968AAA0036870F /* DMCropImageCoverView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DMCropImageCoverView.h; sourceTree = "<group>"; };
-		F145AA751C968AAA0036870F /* DMCropImageCoverView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DMCropImageCoverView.m; sourceTree = "<group>"; };
-		F145AA761C968AAA0036870F /* DMCropImageViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DMCropImageViewController.h; sourceTree = "<group>"; };
-		F145AA771C968AAA0036870F /* DMCropImageViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DMCropImageViewController.m; sourceTree = "<group>"; };
+		F1F01D551C9AA0AA009C41DF /* DMCropImageCoverView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DMCropImageCoverView.h; sourceTree = "<group>"; };
+		F1F01D561C9AA0AA009C41DF /* DMCropImageCoverView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DMCropImageCoverView.m; sourceTree = "<group>"; };
+		F1F01D571C9AA0AA009C41DF /* DMCropImageViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DMCropImageViewController.h; sourceTree = "<group>"; };
+		F1F01D581C9AA0AA009C41DF /* DMCropImageViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DMCropImageViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -87,7 +87,7 @@
 		F145AA2E1C8EB9FE0036870F = {
 			isa = PBXGroup;
 			children = (
-				F145AA731C968AAA0036870F /* DMCropImageViewController */,
+				F1F01D541C9AA0AA009C41DF /* DMCropImageViewController */,
 				F145AA391C8EB9FE0036870F /* CropImageDemo */,
 				F145AA531C8EB9FE0036870F /* CropImageDemoTests */,
 				F145AA5E1C8EB9FF0036870F /* CropImageDemoUITests */,
@@ -147,15 +147,16 @@
 			path = CropImageDemoUITests;
 			sourceTree = "<group>";
 		};
-		F145AA731C968AAA0036870F /* DMCropImageViewController */ = {
+		F1F01D541C9AA0AA009C41DF /* DMCropImageViewController */ = {
 			isa = PBXGroup;
 			children = (
-				F145AA741C968AAA0036870F /* DMCropImageCoverView.h */,
-				F145AA751C968AAA0036870F /* DMCropImageCoverView.m */,
-				F145AA761C968AAA0036870F /* DMCropImageViewController.h */,
-				F145AA771C968AAA0036870F /* DMCropImageViewController.m */,
+				F1F01D551C9AA0AA009C41DF /* DMCropImageCoverView.h */,
+				F1F01D561C9AA0AA009C41DF /* DMCropImageCoverView.m */,
+				F1F01D571C9AA0AA009C41DF /* DMCropImageViewController.h */,
+				F1F01D581C9AA0AA009C41DF /* DMCropImageViewController.m */,
 			);
-			path = DMCropImageViewController;
+			name = DMCropImageViewController;
+			path = ../DMCropImageViewController;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -291,8 +292,8 @@
 				F145AA421C8EB9FE0036870F /* ViewController.m in Sources */,
 				F145AA3F1C8EB9FE0036870F /* AppDelegate.m in Sources */,
 				F145AA3C1C8EB9FE0036870F /* main.m in Sources */,
-				F145AA781C968AAA0036870F /* DMCropImageCoverView.m in Sources */,
-				F145AA791C968AAA0036870F /* DMCropImageViewController.m in Sources */,
+				F1F01D591C9AA0AA009C41DF /* DMCropImageCoverView.m in Sources */,
+				F1F01D5A1C9AA0AA009C41DF /* DMCropImageViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
