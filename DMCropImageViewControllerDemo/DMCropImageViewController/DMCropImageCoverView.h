@@ -31,6 +31,8 @@ NS_ASSUME_NONNULL_BEGIN
 /// 裁剪的区域 
 @property (nonatomic, assign) CGRect m_clipRect;
 
+@property (nullable, nonatomic, weak) UIView *m_recieverView;
+
 @end
 
 NS_ASSUME_NONNULL_END

@@ -41,9 +41,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nullable, nonatomic, weak) IBOutlet id<DMCropImageViewControllerDelegate> delegate;
 
-@property (nullable, nonatomic, strong) UIImage *image;
+@property (nullable, nonatomic, strong) UIImage *m_image;
 
-+ (instancetype)cropImageViewController;
+@property (nonatomic, assign) CGRect m_cropRect;
+
++ (instancetype)cropImageViewControllerWithCropRect:(CGRect)cropRect;
 
 
 @end

@@ -52,11 +52,26 @@
         image = info[UIImagePickerControllerOriginalImage];
     }
 
-    DMCropImageViewController *vc = [DMCropImageViewController cropImageViewController];
-    vc.image = image;
+    CGFloat clipX = 0;
+    CGFloat clipW = [self screenWidth] - clipX * 2;
+    CGFloat clipH = floor(clipW * 9 / 16);
+    CGFloat clipY = floor(([self screenHeight] - clipH) / 2);
+    CGRect frame = {clipX, clipY, clipW, clipH};
+    DMCropImageViewController *vc = [DMCropImageViewController cropImageViewControllerWithCropRect:frame];
+    vc.m_image = image;
     vc.delegate = self;
     [picker pushViewController:vc animated:YES];
     
+}
+
+- (CGFloat)screenWidth
+{
+    return [UIScreen mainScreen].bounds.size.width;
+}
+
+- (CGFloat)screenHeight
+{
+    return [UIScreen mainScreen].bounds.size.height;
 }
 
 #pragma mark - DMCropImageViewControllerDelegate

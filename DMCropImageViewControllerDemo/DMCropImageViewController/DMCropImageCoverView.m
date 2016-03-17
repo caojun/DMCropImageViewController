@@ -40,4 +40,15 @@
     CGContextFillPath(ctx);
 }
 
+
+- (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event
+{
+    if ([self pointInside:point withEvent:event])
+    {
+        return self.m_recieverView;
+    }
+    
+    return nil;
+}
+
 @end
